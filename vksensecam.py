@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ## auto last change for vim and Emacs: (whatever comes last)
 ## Latest change: Mon Mar 08 11:49:34 CET 2010
-## Time-stamp: <2012-03-23 21:51:55 vk>
+## Time-stamp: <2012-03-23 23:03:48 vk>
 """
 vksensecam.py
 ~~~~~~~~~~~~~
@@ -141,9 +141,9 @@ data-set. In this case it does (in the same folder as the SENSOR.CSV):\n\
            Revue Desktop before\n\
 \n\
 Example invocations on GNU/Linux or Mac OS X:\n\
-  vksensecam.py -f /path/SENSOR.CSV --simulate\n\
+  vksensecam.py -f /path/to/sensorfile --simulate\n\
              ... please use this if unsure!\n\
-  vksensecam.py -f /path/SENSOR.CSV\n\
+  vksensecam.py -f /path/to/sensorfile\n\
              ... this is all you need when everything is set up\n\
 \n\
 If unsure, please use the simulate option!\n\

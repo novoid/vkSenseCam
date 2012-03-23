@@ -88,9 +88,9 @@ least.
 :            Revue Desktop before
 : 
 : Example invocations on GNU/Linux or Mac OS X:
-:   vksensecam.py -f /path/SENSOR.CSV --simulate
+:   vksensecam.py -f /path/to/sensorfile --simulate
 :              ... please use this if unsure!
-:   vksensecam.py -f /path/SENSOR.CSV
+:   vksensecam.py -f /path/to/sensorfile
 :              ... this is all you need when everything is set up
 : 
 : If unsure, please use the simulate option!
