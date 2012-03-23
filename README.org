@@ -1,0 +1,127 @@
+* About
+
+In 2012-03 I had the chance to test [[http://viconrevue.com/][Vicon Revue]] (v1) for [[http://en.wikipedia.org/wiki/Lifelogging][Lifelogging]].
+The Vicon Revue is the commercial product of the [[http://en.wikipedia.org/wiki/SenseCam][Microsoft SenseCam]].
+
+Vicon Revue is a neck worn digital camera with sensors. It takes
+(small) photographs whenever the sensors get a pattern that causes the
+firmware to make a snapshot. With the set of photographs you can see
+where you have been while wearing the device. Using those photographs
+for generating a small video helps people remembering their life. This
+has come to attention in the research of memory impairments.
+
+I analyzed the [[http://en.wikipedia.org/wiki/Adobe_air][Adobe AIR]] based software for downloading the data from
+the Vicon Revue and for reviewing the photographs later on.  And I
+realized that I need an alternative software method to access and
+review the data: Adobe AIR will not be around forever and I want to
+avoid any [[http://en.wikipedia.org/wiki/Vendor_lock-in][lock-in]] effect.
+
+* The Issues
+
+During the analyzing phase, I found out that the original JPEG
+photographs do have correct [[http://en.wikipedia.org/wiki/Exif][Exif]] metadata included. Additionally, in
+every image folder, there is a file named «SENSOR.CSV» in [[http://en.wikipedia.org/wiki/Comma-separated_values][CSV format]]
+which contains the sensor data and their time stamps.
+
+After [[http://www.viconrevue.com/product.html][Vicon Revue Desktop]] moves the data from the device to your
+computer, the Exif metadata gets overwritten with the time stamps of
+the import process. Unfortunately, this is where you lose the time
+information within the photographs.
+
+To get to the original times you have to either parse the «SENSOR.CSV»
+or the additionally created [[http://en.wikipedia.org/wiki/Sqlite][SQLite v3]] database. The SQLite database
+contains all values from all «SENSOR.CSV» files and anything you add
+within Vicon Revue Desktop (notes, tags, titles, ...).
+
+But I want to use the photographs outside of Vicon Revue Desktop too!
+
+Therefore I found the standard behavior a bit «rude». My solution I
+present here adds metadata like the time-stamps to the photo files
+itself and to the corresponding «SENSOR.CSV» files as well. When you
+do this *before* the import process of Vicon Revue Desktop, you keep
+the time information (not within Exif but) within the file names at
+least.
+
+* Usage
+
+... as in v0.1 on 2012-03-23:
+
+: Usage:
+:          vksensecam.py [options]
+: 
+: This script does has *two* different modes of operation depending
+: on the format of the given SENSOR.CSV:
+: 
+: MODE 1:
+: This script copies sensor data and photographs from a "Microsoft
+: SenseCam" or "Vicon Revue v1" device to your hard disk and:
+:    * creates a download folder on your hard disk
+:      like e.g. "/configuredpath/2012-03-23T21.18_SenseCam_data"
+:    * copies SENSOR.CSV and photographs to this download folder
+:    * add meta-data such as ISO time-stamps to the file names of photos
+:      like e.g. "2012-03-21T10.41.48_SenseCam_IR_00001810.JPG"
+:    * re-writes the SENSOR.CSV according to the new file names
+:    * stores original SENSOR.CSV as a backup
+:    * Note: EXIF meta-data of the photos is kept unchanged in the 
+:            photographs. Usually they are fine (reflect their exposure
+:            time-stamp and such).
+: 
+: No data is changed on the device itself! You can use other software
+: like Vicon Revue Desktop as well afterwards.
+: 
+: Example invocations on GNU/Linux or Mac OS X:
+:   vksensecam.py --simulate        ... please use this if unsure!
+:   vksensecam.py --verbose         ... to get all the noise details
+:                                       what is going on
+:   vksensecam.py                   ... this is all you need when 
+:                                       everything is set up
+: 
+: MODE 2:
+: If the given SENSOR.CSV is recognized having the format of an already
+: downloaded file (Vicon Revue Desktop changes date-stamp separator
+: characters to slashes), the tool assumes an already downloaded
+: data-set. In this case it does (in the same folder as the SENSOR.CSV):
+:    * rename photo file names like described above
+:    * changes entries in SENSOR.CSV according to the new file names
+:    * saves original SENSOR.CSV as a backup
+:    * Note: EXIF meta-data is already likely overwritten by Vicon 
+:            Revue Desktop before
+: 
+: Example invocations on GNU/Linux or Mac OS X:
+:   vksensecam.py -f /path/SENSOR.CSV --simulate
+:              ... please use this if unsure!
+:   vksensecam.py -f /path/SENSOR.CSV
+:              ... this is all you need when everything is set up
+: 
+: If unsure, please use the simulate option!
+: Basic configuration is done in the first section of the script.
+: 
+:   :copyright:  (c) 2012 by Karl Voit <tools@Karl-Voit.at>
+:   :license:    GPL v2 or any later version
+:   :bugreports: <tools@Karl-Voit.at>
+: 
+: 
+: Options:
+:   -h, --help            show this help message and exit
+:   -f PATH, --folder=PATH
+:                         (optional) override default folder for SENSOR.CSV
+:                         which is "/media/A295-005B/DATA"
+:   -v, --verbose         enable verbose mode
+:   -q, --quiet           do not output anything but just errors on console
+:   -s, --simulate        do not change any file on disk, just report what would
+:                         happen
+:   --version             display version and exit
+
+* Background Information 
+
+- Wiki: http://www.clarity-centre.org/sensecamwiki/index.php/Main_Page
+- Tech Specs: http://www.clarity-centre.org/sensecamwiki/index.php/Technical_specifications
+- more technical details: http://www.clarity-centre.org/claritywiki/images/7/72/SenseCam_User_Guide_v1.4.pdf
+
+* License
+
+This documentation is licensed under a [[http://creativecommons.org/licenses/by-nc-sa/3.0/][Creative Commons
+Attribution-NonCommercial-ShareAlike 3.0 Unported License]].
+
+The script file is licenced under [[http://www.gnu.org/copyleft/gpl.html][GPL v3 or newer]].
+
