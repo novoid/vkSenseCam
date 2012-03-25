@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ## auto last change for vim and Emacs: (whatever comes last)
 ## Latest change: Mon Mar 08 11:49:34 CET 2010
-## Time-stamp: <2012-03-23 23:03:48 vk>
+## Time-stamp: <2012-03-25 17:22:27 vk>
 """
 vksensecam.py
 ~~~~~~~~~~~~~
@@ -359,8 +359,10 @@ def set_filetype_and_create_new_sensorfile(line):
     if filetype == DEVICEFILEFORMAT:
         make_sure_destination_folder_exists()
         newsensorcsvfilename = os.path.join(DESTINATION_FOLDER_WITH_PATH, CSV_FILE_NAME)
+        logging.info("I will put resulting files into the folder %s" % DESTINATION_FOLDER_WITH_PATH )
     else:
         newsensorcsvfilename = TEMP_CSV_FILE_NAME
+        logging.info("I will modify only files into the folder %s" % os.getcwd() )
 
     logging.debug("using new SENSOR filename: [%s]" % newsensorcsvfilename )
 
