@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ## auto last change for vim and Emacs: (whatever comes last)
 ## Latest change: Mon Mar 08 11:49:34 CET 2010
-## Time-stamp: <2012-03-25 17:22:27 vk>
+## Time-stamp: <2012-04-04 18:56:12 vk>
 """
 vksensecam.py
 ~~~~~~~~~~~~~
@@ -19,8 +19,11 @@ COPYRIGHT = "  :copyright:  (c) 2012 by Karl Voit <tools@Karl-Voit.at>\n\
 
 
 import datetime
-import logging, os, re, sys
-import shutil ## for file copy
+import logging
+import os
+import re
+import sys
+import shutil  # for file copy
 from optparse import OptionParser
 
 ## debugging:   for setting a breakpoint:  pdb.set_trace()
@@ -41,7 +44,7 @@ now = datetime.datetime.now()
 
 ## the absolute path to your SENSOR.CSV when SenseCam device is mounted in system:
 ## (I guess this is different on every system)
-CSV_FILE_FOLDER = "/media/A295-005B/DATA"  
+CSV_FILE_FOLDER = "/media/A295-005B/DATA"
 
 ## the new name of the original SENSOR.CSV file which is kept as backup:
 ## (can be arbitrary as long as it differs from existing files)
@@ -75,18 +78,18 @@ DESTINATION_FOLDER_WITH_PATH = os.path.join(DESTINATION_CONTAINING_FOLDER, DESTI
 
 ## defines index positions in CSV file of various information:
 ## more details: http://www.clarity-centre.org/claritywiki/images/7/72/SenseCam_User_Guide_v1.4.pdf
-TYPEIDX = 0  ## one of: CAM ACC CLR PIR TMP BAT RTC FIL VER SYS
-TIMEIDX = 1  ## for CAM: 2012/03/20 19:13:40
-FILEIDX = 2  ## for CAM: 00001807.JPG
-METAIDX = 3  ## for CAM: one of: P L T M -> see CAM_REASON
+TYPEIDX = 0  # one of: CAM ACC CLR PIR TMP BAT RTC FIL VER SYS
+TIMEIDX = 1  # for CAM: 2012/03/20 19:13:40
+FILEIDX = 2  # for CAM: 00001807.JPG
+METAIDX = 3  # for CAM: one of: P L T M -> see CAM_REASON
 
 ## reason, a photo was made:
 ## more details: http://www.clarity-centre.org/claritywiki/images/7/72/SenseCam_User_Guide_v1.4.pdf
-CAM_REASON = { 'P':"IR", 'L':"light", 'T':"timer", 'M':"manual" }
-             ## P = PIR activated 
-             ## T = timer 
-             ## M = manual capture 
-             ## L = light-level change
+CAM_REASON = {'P': "IR", 'L': "light", 'T': "timer", 'M': "manual"}
+             # P = PIR activated
+             # T = timer
+             # M = manual capture
+             # L = light-level change
 
 
 ## Vicon Revue Data (on HDD) format:   «2012-03-20 18:58:58»
@@ -152,7 +155,7 @@ Basic configuration is done in the first section of the script.\n\
 
 parser = OptionParser(usage=USAGE)
 
-parser.add_option("-f", "--folder", dest="folder", 
+parser.add_option("-f", "--folder", dest="folder",
                   help="(optional) override default folder for SENSOR.CSV which is \"" + \
                       CSV_FILE_FOLDER + "\"", metavar="PATH")
 
@@ -167,16 +170,19 @@ parser.add_option("-s", "--simulate", dest="simulate", action="store_true",
 
 parser.add_option("--version", dest="version", action="store_true",
                   help="display version and exit")
-             
+
 
 (options, args) = parser.parse_args()
 
 
 class vk_FileNotFoundException(Exception):
+
     def __init__(self, value):
         self.value = value
+
     def __str__(self):
         return repr(self.value)
+
 
 def handle_logging():
     """Log handling and configuration"""
@@ -190,7 +196,6 @@ def handle_logging():
     else:
         FORMAT = "%(message)s"
         logging.basicConfig(level=logging.INFO, format=FORMAT)
-
 
 
 def copy_file(original, new):
@@ -220,18 +225,17 @@ def make_folder(foldername):
         os.mkdir(foldername)
 
 
-
-def write_line( filehandle, line ):
+def write_line(filehandle, line):
     """writes a line to a file or simulates it"""
 
     if options.simulate:
-        ##logging.debug("SIMULATED: writing line: [" + line.strip() + "]")  ## is a bit noisy
+        ##logging.debug("SIMULATED: writing line: [" + line.strip() + "]")  # is a bit noisy
         pass
     else:
-        filehandle.write( line )
+        filehandle.write(line)
 
 
-def close_file( filehandle):
+def close_file(filehandle):
     """closes file handle or simulates it"""
 
     if options.simulate:
@@ -243,38 +247,37 @@ def close_file( filehandle):
 def generate_new_basename(timestampstring, basename, metadata):
     """generates a new filename based on the timestamp and the old basename"""
 
-    year, month, day, hour, minute, second = TIME_PATTERN.match( timestampstring ).groups()
+    year, month, day, hour, minute, second = TIME_PATTERN.match(timestampstring).groups()
 
     name, extension = os.path.splitext(basename)
 
     return year + '-' + month + '-' + day + 'T' + \
-        hour + '.' + minute  + '.' + second + '_' + \
+        hour + '.' + minute + '.' + second + '_' + \
         'SenseCam_' + \
         CAM_REASON[metadata] + '_' + \
         name + extension
-
 
 
 def handle_photograph_file(basename, timestampstring, metadata, filetype, issues):
     """Handles a single photo file"""
 
     logging.debug("handle_photo_file: " + basename + " with time " + \
-                      timestampstring + " and reason " + CAM_REASON[metadata] )
+                      timestampstring + " and reason " + CAM_REASON[metadata])
 
-    returnline = False  ## has to be set in any case!
+    returnline = False  # has to be set in any case!
 
     old_csv_line = "CAM," + timestampstring + ',' + basename + ',' + metadata + "\n"
 
     if filetype == DEVICEFILEFORMAT:
         ## in DEVICEFILEFORMAT; "00010297.JPG" is actually "H01/M0102/00010297.JPG"
-        sensor_path = os.getcwd()  ## store for later re-switching to
+        sensor_path = os.getcwd()  # store for later re-switching to
 
-        device_file_path = os.path.join(sensor_path, 'H'+basename[2:4], 'M'+basename[2:6] )
-        logging.debug("device_file_path: [%s]" % device_file_path )
-        os.chdir( device_file_path )
+        device_file_path = os.path.join(sensor_path, 'H' + basename[2:4], 'M' + basename[2:6])
+        logging.debug("device_file_path: [%s]" % device_file_path)
+        os.chdir(device_file_path)
 
     if os.path.isfile(basename):
-        if TIME_PATTERN.match( timestampstring ):
+        if TIME_PATTERN.match(timestampstring):
 
             new_basename = generate_new_basename(timestampstring, basename, metadata)
 
@@ -294,10 +297,10 @@ def handle_photograph_file(basename, timestampstring, metadata, filetype, issues
                 rename_file(basename, filedestination)
 
             issues['CAMfound'] += 1
-    
+
             ## basically replacing the file name of the original CSV line with the new file name:
             returnline = "CAM," + timestampstring + ',' + new_basename + ',' + metadata + "\n"
-    
+
         else:
             logging.warn("WARNING: time string \"" + timestampstring + \
                               "\" does not match RegEx for time strings! Omitting image \"" + \
@@ -305,7 +308,7 @@ def handle_photograph_file(basename, timestampstring, metadata, filetype, issues
             issues['timestampmismatch'] += 1
             returnline = old_csv_line
 
-    else:  ## basename is not existing as file (any more?)
+    else:  # basename is not existing as file (any more?)
         logging.warn("WARNING: file \"" + basename + \
                          "\" does not exist (any more). Skipping and omitting in new CSV file.")
         issues['file_not_found'] += 1
@@ -325,10 +328,11 @@ def make_sure_destination_folder_exists():
         sys.exit(4)
 
     if os.path.isdir(DESTINATION_FOLDER_WITH_PATH):
-        logging.error("\nERROR: the desired destination folder [%s] already exists. (I stop here to prevent overwritten data.)\n" % DESTINATION_FOLDER_WITH_PATH )
+        logging.error("\nERROR: the desired destination folder [%s] already exists. (I stop here " + \
+                          "to prevent overwritten data.)\n" % DESTINATION_FOLDER_WITH_PATH)
         sys.exit(5)
     else:
-        logging.debug("creating folder [%s]" % DESTINATION_FOLDER_WITH_PATH )
+        logging.debug("creating folder [%s]" % DESTINATION_FOLDER_WITH_PATH)
         make_folder(DESTINATION_FOLDER_WITH_PATH)
 
 
@@ -350,7 +354,6 @@ def guess_data_format(line):
     return filetype
 
 
-
 def set_filetype_and_create_new_sensorfile(line):
     """sets filetype variable and creates sensor files accordingly"""
 
@@ -359,12 +362,12 @@ def set_filetype_and_create_new_sensorfile(line):
     if filetype == DEVICEFILEFORMAT:
         make_sure_destination_folder_exists()
         newsensorcsvfilename = os.path.join(DESTINATION_FOLDER_WITH_PATH, CSV_FILE_NAME)
-        logging.info("I will put resulting files into the folder %s" % DESTINATION_FOLDER_WITH_PATH )
+        logging.info("I will put resulting files into the folder %s" % DESTINATION_FOLDER_WITH_PATH)
     else:
         newsensorcsvfilename = TEMP_CSV_FILE_NAME
-        logging.info("I will modify only files into the folder %s" % os.getcwd() )
+        logging.info("I will modify only files into the folder %s" % os.getcwd())
 
-    logging.debug("using new SENSOR filename: [%s]" % newsensorcsvfilename )
+    logging.debug("using new SENSOR filename: [%s]" % newsensorcsvfilename)
 
     tempcsvfile = False
 
@@ -378,7 +381,7 @@ def set_filetype_and_create_new_sensorfile(line):
 
 def ParseSensorFile(csvfilename, issues):
 
-    filetype = False  ## either IMPORTFILEFORMAT or DEVICEFILEFORMAT
+    filetype = False  # either IMPORTFILEFORMAT or DEVICEFILEFORMAT
 
     for line in open(csvfilename, 'r'):
 
@@ -386,31 +389,31 @@ def ParseSensorFile(csvfilename, issues):
             filetype, newsensorcsvfilename, tempcsvfile = set_filetype_and_create_new_sensorfile(line)
 
         elements = line.split(",")
-        ## logging.debug("line: " + str(elements) )  ## is a bit noisy
+        ## logging.debug("line: " + str(elements) )  # is a bit noisy
 
         if elements[TYPEIDX] == 'CAM':
-            logging.debug( "CAM found; file:[" + elements[FILEIDX] + "]  time:[" + elements[TIMEIDX] + "]" )
+            logging.debug("CAM found; file:[" + elements[FILEIDX] + "]  time:[" + elements[TIMEIDX] + "]")
             newcsvline, issues = handle_photograph_file(elements[FILEIDX], elements[TIMEIDX], \
                                                            elements[METAIDX][0], filetype, issues)
         else:
             newcsvline = line
 
-        write_line( tempcsvfile, newcsvline )
+        write_line(tempcsvfile, newcsvline)
 
     close_file(tempcsvfile)
 
     if filetype == DEVICEFILEFORMAT:
         fromfile = os.path.join(CSV_FILE_FOLDER, CSV_FILE_NAME)
         tofile = os.path.join(DESTINATION_FOLDER_WITH_PATH, BACKUP_CSV_FILE_NAME)
-        logging.debug("storing original \""+ fromfile + "\" to \"" + tofile + "\"")
-        copy_file( fromfile, tofile )
+        logging.debug("storing original \"" + fromfile + "\" to \"" + tofile + "\"")
+        copy_file(fromfile, tofile)
 
     elif filetype == IMPORTFILEFORMAT:
-        logging.debug("storing original \""+ CSV_FILE_NAME + "\" to \"" + BACKUP_CSV_FILE_NAME + "\"")
-        rename_file( CSV_FILE_NAME, BACKUP_CSV_FILE_NAME )
+        logging.debug("storing original \"" + CSV_FILE_NAME + "\" to \"" + BACKUP_CSV_FILE_NAME + "\"")
+        rename_file(CSV_FILE_NAME, BACKUP_CSV_FILE_NAME)
         logging.debug("renaming newly created \"" + TEMP_CSV_FILE_NAME + "\" to \"" + \
                       CSV_FILE_NAME + "\"")
-        rename_file( TEMP_CSV_FILE_NAME, CSV_FILE_NAME )
+        rename_file(TEMP_CSV_FILE_NAME, CSV_FILE_NAME)
 
     return issues
 
@@ -418,7 +421,7 @@ def ParseSensorFile(csvfilename, issues):
 def main():
     """Main function [make pylint happy :)]"""
 
-    issues = { 'file_not_found':0, 'error':0, 'timestampmismatch':0, 'CAMfound':0 }
+    issues = {'file_not_found': 0, 'error': 0, 'timestampmismatch': 0, 'CAMfound': 0}
 
     print "     " + os.path.basename(sys.argv[0]) + " " + PROG_VERSION
     print COPYRIGHT
@@ -443,14 +446,14 @@ def main():
     original_path = os.getcwd()
 
     if not options.folder:
-        logging.debug("taking default folder [%s]" % CSV_FILE_FOLDER )
+        logging.debug("taking default folder [%s]" % CSV_FILE_FOLDER)
         csvfile = os.path.join(CSV_FILE_FOLDER, CSV_FILE_NAME)
     else:
-        logging.debug("user has chosen his own folder [%s]" % options.folder )
+        logging.debug("user has chosen his own folder [%s]" % options.folder)
         csvfile = os.path.join(options.folder, CSV_FILE_NAME)
 
     if os.path.isfile(csvfile):
-        logging.info("found csvfile: " + csvfile )
+        logging.info("found csvfile: " + csvfile)
 
         path = os.path.dirname(csvfile)
         logging.debug("has directory: " + path)
@@ -460,7 +463,7 @@ def main():
         if path:
             os.chdir(path)
         logging.debug("changed cwd to: " + os.getcwd())
-        issues = ParseSensorFile( basename, issues )
+        issues = ParseSensorFile(basename, issues)
         os.chdir(original_path)
 
     else:
