@@ -47,7 +47,7 @@ least.
 ... as in v0.1 on 2012-03-23:
 
 : Usage:
-:          vksensecam.py [options]
+:          vksensecam-getphotos.py [options]
 : 
 : This script does has *two* different modes of operation depending
 : on the format of the given SENSOR.CSV:
@@ -70,11 +70,11 @@ least.
 : like Vicon Revue Desktop as well afterwards.
 : 
 : Example invocations on GNU/Linux or Mac OS X:
-:   vksensecam.py --simulate        ... please use this if unsure!
-:   vksensecam.py --verbose         ... to get all the noise details
-:                                       what is going on
-:   vksensecam.py                   ... this is all you need when 
-:                                       everything is set up
+:   vksensecam-getphotos.py --simulate    ... please use this if unsure!
+:   vksensecam-getphotos.py --verbose     ... to get all the noise details
+:                                             what is going on
+:   vksensecam-getphotos.py               ... this is all you need when 
+:                                             everything is set up
 : 
 : MODE 2:
 : If the given SENSOR.CSV is recognized having the format of an already
@@ -88,9 +88,9 @@ least.
 :            Revue Desktop before
 : 
 : Example invocations on GNU/Linux or Mac OS X:
-:   vksensecam.py -f /path/to/sensorfile --simulate
+:   vksensecam-getphotos.py -f /path/to/sensorfile --simulate
 :              ... please use this if unsure!
-:   vksensecam.py -f /path/to/sensorfile
+:   vksensecam-getphotos.py -f /path/to/sensorfile
 :              ... this is all you need when everything is set up
 : 
 : If unsure, please use the simulate option!
@@ -111,6 +111,27 @@ least.
 :   -s, --simulate        do not change any file on disk, just report what would
 :                         happen
 :   --version             display version and exit
+
+* Bonus-Tools
+
+** vksensecam-ls.sh
+
+The short shell script lists the files which are "interesting" to the
+user:
+- images that were taken because of pressing the "take a photo"-button
+- images that were renamed from their original file name
+
+This gives a quick overview over a set of SenseCam images if the user
+has already screened the images and renamed important image files.
+
+** vksensecam-openmanualfotos.sh
+
+This sort shell script uses a command called "open" (exists on Mac OS
+X and can easily be done for GNU/Linux) to open all images that were
+invoked manually. If you close the image viewer, the next one opens.
+
+This is very handy to quickly find and rename images which were shot
+on purpose - using the button.
 
 * Background Information 
 

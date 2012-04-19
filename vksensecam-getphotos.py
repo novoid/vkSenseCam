@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 ## auto last change for vim and Emacs: (whatever comes last)
 ## Latest change: Mon Mar 08 11:49:34 CET 2010
-## Time-stamp: <2012-04-04 18:56:12 vk>
+## Time-stamp: <2012-04-19 16:03:37 vk>
 """
-vksensecam.py
-~~~~~~~~~~~~~
+vksensecam-getphotos.py
+~~~~~~~~~~~~~~~~~~~~~~~
 
 FIXXME:
    * add exception handling to all file system operation calls
@@ -126,11 +126,11 @@ No data is changed on the device itself! You can use other software\n\
 like Vicon Revue Desktop as well afterwards.\n\
 \n\
 Example invocations on GNU/Linux or Mac OS X:\n\
-  vksensecam.py --simulate        ... please use this if unsure!\n\
-  vksensecam.py --verbose         ... to get all the noise details\n\
-                                      what is going on\n\
-  vksensecam.py                   ... this is all you need when \n\
-                                      everything is set up\n\
+  vksensecam-getphotos.py --simulate   ... please use this if unsure!\n\
+  vksensecam-getphotos.py --verbose    ... to get all the noise details\n\
+                                           what is going on\n\
+  vksensecam-getphotos.py              ... this is all you need when \n\
+                                           everything is set up\n\
 \n\
 MODE 2:\n\
 If the given SENSOR.CSV is recognized having the format of an already\n\
@@ -144,10 +144,10 @@ data-set. In this case it does (in the same folder as the SENSOR.CSV):\n\
            Revue Desktop before\n\
 \n\
 Example invocations on GNU/Linux or Mac OS X:\n\
-  vksensecam.py -f /path/to/sensorfile --simulate\n\
-             ... please use this if unsure!\n\
-  vksensecam.py -f /path/to/sensorfile\n\
-             ... this is all you need when everything is set up\n\
+  vksensecam-getphotos.py -f /path/to/sensorfile --simulate\n\
+                      ... please use this if unsure!\n\
+  vksensecam-getphotos.py -f /path/to/sensorfile\n\
+                      ... this is all you need when everything is set up\n\
 \n\
 If unsure, please use the simulate option!\n\
 Basic configuration is done in the first section of the script.\n\
